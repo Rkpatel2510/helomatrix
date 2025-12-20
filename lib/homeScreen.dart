@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -45,6 +47,31 @@ class _HomeScreenState extends State<HomeScreen> {
         "${startTime.format(context)} - ${endTime.format(context)}",
       );
     });
+  }
+
+  Future<void> apiCall() async {
+    final url = Uri.parse("https://jsonplaceholder.typicode.com/posts/1");
+    final response = await get(url);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(data['id'].toString()),
+            content: Text(data.toString()),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    } else {}
   }
 
   @override
@@ -243,7 +270,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      apiCall();
+                    },
                     child: const Text(
                       "Submit",
                       style: TextStyle(color: Colors.black),
